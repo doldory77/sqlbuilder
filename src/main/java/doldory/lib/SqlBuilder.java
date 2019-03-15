@@ -45,7 +45,7 @@ public class SqlBuilder {
 	private static final Pattern pattern;
 	
 	static {
-		pattern = Pattern.compile(PARAM_GUBUN_CHAR.concat("(.+)").concat(PARAM_GUBUN_CHAR));
+		pattern = Pattern.compile(PARAM_GUBUN_CHAR.concat("([^\\s]+)").concat(PARAM_GUBUN_CHAR));
 	}
 	
 	private SqlBuilder() {
@@ -267,6 +267,7 @@ public class SqlBuilder {
 	private SqlItem getSqlItem(InputStream src, String sqlId, Object obj) throws IllegalArgumentException, IllegalAccessException, SAXException, IOException, ParserConfigurationException {
 		
 		Map<String, String> params = buildParameter(obj);
+		
 		String hashKey = buildHashKey(params);
 		SqlItem sqlItem = null;
 		String sql = null;

@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map>
+    <sql id="inspAccomLst">
+        SELECT
+            a.faci_task_dvsn_cd   AS faci_task_dvsn_cd,
+            a.work_cmd_no         AS work_cmd_no,
+            a.work_cmd_serno      AS work_cmd_serno,
+            a.plan_start_dt       AS plan_start_dt,
+            a.dngt_dvsn_cd        AS dngt_dvsn_cd,
+            (
+                SELECT
+                    x.cmn_cd_nm
+                FROM
+                    rmzz_cmn_cd x
+                WHERE
+                    x.clsf_cd = 'FSZZ51'
+                    AND x.cmn_cd = a.dngt_dvsn_cd
+            ) AS dngt_dvsn_nm,
+            a.work_team_cd        AS work_team_cd,
+            a.insp_dvsn_cd        AS insp_dvsn_cd,
+            a.insp_kind_cd        AS insp_kind_cd,
+            (
+                SELECT
+                    cmn_cd_nm
+                FROM
+                    rmzz_cmn_cd
+                WHERE
+                    clsf_cd = 'FSFC14'
+                    AND cmn_cd = a.srtpt_stn_cd
+                    AND use_yn = 'Y'
+            )
+            || CASE
+                WHEN a.srtpt_stn_cd IS NULL THEN ''
+                WHEN a.srtpt_stn_cd = '' THEN ''
+                ELSE ' ~ '
+            END
+            || (
+                SELECT
+                    cmn_cd_nm
+                FROM
+                    rmzz_cmn_cd
+                WHERE
+                    clsf_cd = 'FSFC14'
+                    AND cmn_cd = a.endpt_stn_cd
+                    AND use_yn = 'Y'
+            ) AS plan_insp_sec,
+            a.work_kind_cd        AS work_kind_cd,
+            (
+                SELECT
+                    l.work_kind_nm
+                FROM
+                    fsfz_work_kind_cd l
+                WHERE
+                    a.faci_task_dvsn_cd = l.faci_task_dvsn_cd
+                    AND a.insp_kind_cd = l.insp_kind_cd
+                    AND a.work_kind_cd = l.work_kind_cd
+            ) AS work_kind_nm,
+            a.plan_qty            AS plan_qty,
+            a.fac_unit_cd         AS plan_fac_unit_cd,
+            (    --계획시설물 단위
+                SELECT
+                    x.cmn_cd_nm
+                FROM
+                    rmzz_cmn_cd x
+                WHERE
+                    x.clsf_cd = 'FSFA17'
+                    AND x.cmn_cd = a.fac_unit_cd
+            ) AS plan_fac_unit_nm,
+            b.work_accom_no       AS ww,
+            b.m_work_accom_no     AS m_work_accom_no,
+            CASE
+                WHEN b.work_accom_no = ''  THEN b.m_work_accom_no
+                WHEN b.work_accom_no IS NULL THEN b.m_work_accom_no
+                ELSE b.work_accom_no
+            END AS work_accom_no,
+            b.work_start_dt       AS work_start_dt,
+            b.work_start_dttm     AS work_start_dttm,
+            (
+                SELECT
+                    cmn_cd_nm
+                FROM
+                    rmzz_cmn_cd
+                WHERE
+                    clsf_cd = 'FSFC14'
+                    AND cmn_cd = b.srtpt_stn_cd
+                    AND use_yn = 'Y'
+            )
+            || CASE
+                WHEN b.srtpt_stn_cd IS NULL THEN ''
+                WHEN a.srtpt_stn_cd = '' THEN ''
+                ELSE ' ~ '
+            END
+            || (
+                SELECT
+                    cmn_cd_nm
+                FROM
+                    rmzz_cmn_cd
+                WHERE
+                    clsf_cd = 'FSFC14'
+                    AND cmn_cd = b.endpt_stn_cd
+                    AND use_yn = 'Y'
+            ) AS accom_insp_sec,
+            b.accom_qty           AS accom_qty,
+            b.fac_unit_cd         AS accom_fac_unit_cd,
+            (      --점검시설물 단위
+                SELECT
+                    x.cmn_cd_nm
+                FROM
+                    rmzz_cmn_cd x
+                WHERE
+                    x.clsf_cd = 'FSFA17'
+                    AND x.cmn_cd = b.fac_unit_cd
+            ) AS accom_fac_unit_nm,
+            b.rmrk                AS rmrk,
+            b.insp_dvsn_cd        AS accom_insp_dvsn_cd,
+            b.insp_kind_cd        AS accom_insp_kind_cd,
+            b.work_kind_cd        AS accom_work_kind_cd,
+            (
+                SELECT
+                    l.work_kind_nm
+                FROM
+                    fsfz_work_kind_cd l
+                WHERE
+                    b.faci_task_dvsn_cd = l.faci_task_dvsn_cd
+                    AND b.insp_kind_cd = l.insp_kind_cd
+                    AND b.work_kind_cd = l.work_kind_cd
+            ) AS accom_work_kind_nm,
+            (
+                SELECT
+                    l.faci_nm
+                FROM
+                    fsfa_faci_mstr l
+                WHERE
+                    l.faci_clsf_cd = b.faci_clsf_cd
+                    AND l.faci_serno = b.faci_serno
+            ) AS faci_nm,
+            (
+                SELECT
+                    l.bar_cd
+                FROM
+                    fsfa_faci_mstr l
+                WHERE
+                    l.faci_clsf_cd = b.faci_clsf_cd
+                    AND l.faci_serno = b.faci_serno
+            ) AS bar_cd,
+            a.task_dt             AS plan_task_dt,
+            b.task_dt             AS accom_task_dt
+        FROM
+            fsfb_work_plan_dtl a
+            LEFT OUTER JOIN fsfb_work_accom b ON a.faci_task_dvsn_cd = b.faci_task_dvsn_cd
+                AND a.work_cmd_no = b.work_cmd_no
+                AND a.work_cmd_serno = b.work_cmd_serno
+                AND a.insp_dvsn_cd = b.insp_dvsn_cd
+            LEFT OUTER JOIN tswk_work_lst c ON a.faci_task_dvsn_cd = c.faci_task_dvsn_cd
+                AND a.work_cmd_no = c.work_cmd_no
+                AND a.work_cmd_serno = c.work_cmd_serno
+                AND ( c.work_appr_stt_cd != '3' OR c.work_appr_stt_cd IS NULL )
+        WHERE
+            a.plan_stt_cd = '4' --2012-02-06 승인확정된 계획만 조회(강종수)
+            AND a.faci_task_dvsn_cd = #s_faci_task_dvsn_cd#
+        <notEmpty property="s_insp_dvsn_cd">
+            AND a.insp_dvsn_cd = #s_insp_dvsn_cd#
+        </notEmpty>
+        <notEmpty property="s_insp_kind_cd">
+            AND a.insp_kind_cd = #s_insp_kind_cd#
+        </notEmpty>
+        <notEqual property="s_insp_stn_cd" value="*">
+            AND  a.srtpt_stn_cd = #s_insp_stn_cd#
+        </notEqual>
+            AND (a.task_dt BETWEEN #s_plan_start_dt# AND #s_plan_end_dt# OR b.task_dt BETWEEN #s_plan_start_dt# AND #s_plan_end_dt#)
+        <notEqual property="s_enfc_cmp_cd" value="*">
+            AND  CASE WHEN b.enfc_cmp_cd ='' THEN a.enfc_cmp_cd when b.enfc_cmp_cd IS NULL THEN a.enfc_cmp_cd ELSE b.enfc_cmp_cd END = #s_enfc_cmp_cd#
+        </notEqual>
+            AND a.work_cmd_no IS NOT NULL
+
+        UNION ALL
+
+        SELECT
+            #s_faci_task_dvsn_cd#,
+            '',
+            0,
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            0,
+            '',
+            '',
+            a.work_accom_no     AS ww,
+            a.m_work_accom_no   AS m_work_accom_no,
+            CASE
+                WHEN a.work_accom_no = ''  THEN a.m_work_accom_no
+                WHEN a.work_accom_no IS NULL THEN a.m_work_accom_no
+                ELSE a.work_accom_no
+            END AS work_accom_no,
+            a.work_start_dt,
+            a.work_start_dttm,
+            (
+                SELECT
+                    cmn_cd_nm
+                FROM
+                    rmzz_cmn_cd
+                WHERE
+                    clsf_cd = 'FSFC14'
+                    AND cmn_cd = a.srtpt_stn_cd
+                    AND use_yn = 'Y'
+            )
+            || CASE
+                WHEN a.srtpt_stn_cd IS NULL THEN ''
+                WHEN a.srtpt_stn_cd = '' THEN ''
+                ELSE ' ~ '
+            END
+            || (
+                SELECT
+                    cmn_cd_nm
+                FROM
+                    rmzz_cmn_cd
+                WHERE
+                    clsf_cd = 'FSFC14'
+                    AND cmn_cd = a.endpt_stn_cd
+                    AND use_yn = 'Y'
+            ) AS accom_insp_sec,
+            a.accom_qty         AS accom_qty,
+            a.fac_unit_cd       AS accom_fac_unit_cd,
+            (  --점검시설물 단위
+                SELECT
+                    x.cmn_cd_nm
+                FROM
+                    rmzz_cmn_cd x
+                WHERE
+                    x.clsf_cd = 'FSFA17'
+                    AND x.cmn_cd = a.fac_unit_cd
+            ) AS accom_fac_unit_nm,
+            a.rmrk,
+            a.insp_dvsn_cd      AS accom_insp_dvsn_cd,
+            a.insp_kind_cd      AS accom_insp_kind_cd,
+            a.work_kind_cd      AS accom_work_kind_cd,
+            (
+                SELECT
+                    l.work_kind_nm
+                FROM
+                    fsfz_work_kind_cd l
+                WHERE
+                    a.faci_task_dvsn_cd = l.faci_task_dvsn_cd
+                    AND a.insp_kind_cd = l.insp_kind_cd
+                    AND a.work_kind_cd = l.work_kind_cd
+            ) AS accom_work_kind_nm,
+            b.faci_nm,
+            b.bar_cd,
+            ''                  AS plan_task_dt,
+            a.task_dt           AS accom_task_dt
+        FROM
+            fsfb_work_accom a
+            LEFT OUTER JOIN fsfa_faci_mstr b ON a.faci_clsf_cd = b.faci_clsf_cd
+                AND a.faci_serno = b.faci_serno
+        WHERE a.faci_task_dvsn_cd = #s_faci_task_dvsn_cd#
+        <notEmpty property="s_insp_dvsn_cd">
+            AND a.insp_dvsn_cd = #s_insp_dvsn_cd#
+        </notEmpty>
+        <notEmpty property="s_insp_kind_cd">
+            AND a.insp_kind_cd = #s_insp_kind_cd#
+        </notEmpty>
+        <notEmpty property="s_insp_stn_cd">
+            AND a.srtpt_stn_cd = #s_insp_stn_cd#
+        </notEmpty>
+            AND  a.task_dt  BETWEEN  #s_plan_start_dt#  AND  #s_plan_end_dt#
+        <notEqual property="s_enfc_cmp_cd" value="*">
+            AND  a.enfc_cmp_cd = #s_enfc_cmp_cd#
+        </notEqual>
+            AND  a.work_cmd_no IS NULL
+
+        ORDER BY PLAN_TASK_DT, ACCOM_TASK_DT
+    </sql>
+</map>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map>
+    <parameter class="map" />
+    <result class="com.example.myapptest10.model.UserVo" />
+
+    <sql type="select">
+        SELECT
+            NAME
+            ,AGE
+            ,TELL
+        <notEmpty property="address">
+            ,ADDRESS
+        </notEmpty>
+        FROM CONTACT
+        WHERE 1=1
+            AND ID = #id#
+        <notEmpty property="pass">
+            AND PASS = #pass#
+        </notEmpty>
+        <notEmpty property="age">
+            AND AGE = #age#
+        </notEmpty>
+        <compare property="country" value="korean">
+            AND COUNTRY = 'KR'
+        </compare>
+        <choose property="gender">
+        	<when value="F">
+        	AND GENDER = 'F'
+        	</when>
+        	<when value="M">
+        	AND GENDER = 'M'
+        	</when>
+        </choose>
+        <list property="favoriteNumber">
+        	AND FAVORITE_NUMBER IN ( #favoriteNumber# )
+        </list>
+        <list property="hobby">
+        	AND HOBBY IN ( #hobby# )
+        </list>
+    </sql>
+</map>

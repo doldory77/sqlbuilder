@@ -1,4 +1,4 @@
-package doldory.lib.sql;
+package doldory.lib;
 
 import java.util.List;
 
@@ -15,7 +15,14 @@ public class SampleVo {
 	private String country;
 	private List<String> hobby;
 	private List<Integer> favoriteNumber;
+	private String city;
 	
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
 	public List<Integer> getFavoriteNumber() {
 		return favoriteNumber;
 	}
@@ -82,11 +89,11 @@ public class SampleVo {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	
 	@Override
 	public String toString() {
 		return "SampleVo [name=" + name + ", age=" + age + ", gender=" + gender + ", email=" + email + ", tell=" + tell
-				+ ", address=" + address + ", pass=" + pass + ", id=" + id + ", country=" + country + "]";
+				+ ", address=" + address + ", pass=" + pass + ", id=" + id + ", country=" + country + ", hobby=" + hobby
+				+ ", favoriteNumber=" + favoriteNumber + ", city=" + city + "]";
 	}
 	
 }

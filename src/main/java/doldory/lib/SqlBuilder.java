@@ -1,4 +1,4 @@
-package doldory.lib.sql;
+package doldory.lib;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +34,8 @@ public class SqlBuilder {
 	
 	public static final String TAG_TEXT = "#text";
 	public static final String TAG_NOT_EMPTY = "notEmpty";
-	public static final String TAG_COMPARE = "compare";
+	public static final String TAG_EQUAL = "equal";
+	public static final String TAG_NOT_EQUAL = "notequal";
 	public static final String TAG_LIST = "list";
 	public static final String TAG_CHOOSE = "choose";
 	public static final String TAG_WHEN = "when";
@@ -210,12 +211,20 @@ public class SqlBuilder {
 				if (!Util.isNullOrEmpty(params.get(tmpNodeKey))) {
 					sb.append(tmpNode.getFirstChild().getNodeValue());
 				}
-			} else if (TAG_COMPARE.equalsIgnoreCase(tmpNode.getNodeName())) {
+			} else if (TAG_EQUAL.equalsIgnoreCase(tmpNode.getNodeName())) {
 				tmpNodeMap = tmpNode.getAttributes();
 				tmpNodeKey = tmpNodeMap.getNamedItem(ATTR_PROPERTY).getNodeValue();
 				tmpNodeValue = tmpNodeMap.getNamedItem(ATTR_VALUE).getNodeValue();
 				
 				if (!Util.isNullOrEmpty(params.get(tmpNodeKey)) && tmpNodeValue.equals(Util.splitQt(params.get(tmpNodeKey)))) {
+					sb.append(tmpNode.getFirstChild().getNodeValue());
+				}
+			} else if (TAG_NOT_EQUAL.equalsIgnoreCase(tmpNode.getNodeName())) {
+				tmpNodeMap = tmpNode.getAttributes();
+				tmpNodeKey = tmpNodeMap.getNamedItem(ATTR_PROPERTY).getNodeValue();
+				tmpNodeValue = tmpNodeMap.getNamedItem(ATTR_VALUE).getNodeValue();
+				
+				if (!Util.isNullOrEmpty(params.get(tmpNodeKey)) && !tmpNodeValue.equals(Util.splitQt(params.get(tmpNodeKey)))) {
 					sb.append(tmpNode.getFirstChild().getNodeValue());
 				}
 			} else if (TAG_LIST.equalsIgnoreCase(tmpNode.getNodeName())) {

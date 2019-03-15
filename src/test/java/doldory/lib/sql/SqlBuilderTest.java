@@ -12,6 +12,9 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import doldory.lib.SampleVo;
+import doldory.lib.SqlBuilder;
+
 public class SqlBuilderTest {
 
 	SqlBuilder sqlBuilder = null;
@@ -35,6 +38,7 @@ public class SqlBuilderTest {
         sample.setPass("12341234");
         sample.setId("doldory");
         sample.setCountry("korean");
+        sample.setCity("Incheon");
         
         sample.setHobby(new ArrayList<String>());
         sample.getHobby().add("game");

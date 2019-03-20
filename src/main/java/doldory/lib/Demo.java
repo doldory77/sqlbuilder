@@ -22,7 +22,7 @@ public class Demo {
 		File file = new File(System.getProperty("user.dir").concat("\\src\\main\\resources\\sample2.xml"));
 		SqlBuilder sqlBuilder = SqlBuilder.getInstance();
 		try {
-			String sql = sqlBuilder.getSql(new FileInputStream(file), "SELECT USER1", params2);
+			sqlBuilder.getSql(new FileInputStream(file), "SELECT USER1", params2);
 			sqlBuilder.print();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -31,5 +31,7 @@ public class Demo {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
+	
 }

@@ -63,10 +63,11 @@ public class SqlBuilder {
 		String classType;
 		String listType = "";
 		StringBuilder sb = null;
-		if ("java.util.HashMap".equals(obj.getClass().getTypeName())) {
+		if ("java.util.HashMap".equals(obj.getClass().getName())) {
 			Map<String, Object> tmp = (HashMap<String, Object>) obj;
 			for (Entry<String, Object> elem: tmp.entrySet()) {
-				classType = elem.getValue().getClass().getTypeName();
+				if (elem.getValue() == null) continue;
+				classType = elem.getValue().getClass().getName();
 				if ("int".equals(classType) || "java.lang.Integer".equals(classType)) {
 					params.put(elem.getKey(), String.valueOf(elem.getValue()));
 				} else if ("long".equals(classType) || "java.lang.Long".equals(classType)) {
@@ -78,12 +79,12 @@ public class SqlBuilder {
 					
 					List<?> list = (List<?>) elem.getValue();
 					if (list != null && list.size() > 0) {        			
-	        			if ("java.lang.String".equals(list.get(0).getClass().getTypeName())) {
+	        			if ("java.lang.String".equals(list.get(0).getClass().getName())) {
 	        				listType = "list_string";
-	        			} else if ("int".equals(list.get(0).getClass().getTypeName()) 
-	        					|| "java.lang.Integer".equals(list.get(0).getClass().getTypeName())
-	        					|| "long".equals(list.get(0).getClass().getTypeName()) 
-	        					|| "java.lang.Long".equals(list.get(0).getClass().getTypeName())) {
+	        			} else if ("int".equals(list.get(0).getClass().getName()) 
+	        					|| "java.lang.Integer".equals(list.get(0).getClass().getName())
+	        					|| "long".equals(list.get(0).getClass().getName()) 
+	        					|| "java.lang.Long".equals(list.get(0).getClass().getName())) {
 	        				listType = "list_numeric";
 	        			}
 	        			
@@ -113,6 +114,7 @@ public class SqlBuilder {
 			for (Field field: fields) {
 				classType = field.getType().getCanonicalName();
 				field.setAccessible(true);
+				if (field.get(obj) == null) continue;
 				if ("int".equals(classType) || "java.lang.Integer".equals(classType)) {
 					params.put(field.getName(), String.valueOf(field.get(obj)));
 				} else if ("long".equals(classType) || "java.lang.Long".equals(classType)) {
@@ -124,12 +126,12 @@ public class SqlBuilder {
 				
 					List<?> list = (List<?>) field.get(obj);
 					if (list != null && list.size() > 0) {        			
-	        			if ("java.lang.String".equals(list.get(0).getClass().getTypeName())) {
+	        			if ("java.lang.String".equals(list.get(0).getClass().getName())) {
 	        				listType = "list_string";
-	        			} else if ("int".equals(list.get(0).getClass().getTypeName()) 
-	        					|| "java.lang.Integer".equals(list.get(0).getClass().getTypeName())
-	        					|| "long".equals(list.get(0).getClass().getTypeName()) 
-	        					|| "java.lang.Long".equals(list.get(0).getClass().getTypeName())) {
+	        			} else if ("int".equals(list.get(0).getClass().getName()) 
+	        					|| "java.lang.Integer".equals(list.get(0).getClass().getName())
+	        					|| "long".equals(list.get(0).getClass().getName()) 
+	        					|| "java.lang.Long".equals(list.get(0).getClass().getName())) {
 	        				listType = "list_numeric";
 	        			}
 	        			
@@ -348,7 +350,7 @@ public class SqlBuilder {
 		}
 		
 		public static boolean isNullOrEmpty(String str) {
-			return str == null || "".equals(str);
+			return str == null || str.length() == 0 || "''".equals(str) || "".equals(str);
 		}
 	}
 	

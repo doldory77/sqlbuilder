@@ -161,6 +161,9 @@
         <notEmpty property="s_insp_dvsn_cd">
             AND a.insp_dvsn_cd = #s_insp_dvsn_cd#
         </notEmpty>
+        <empty property="s_insp_dvsn_cd">
+        	AND a.insp_dvsn_cd IN (SELECT cmn_cd FROM rmzz_cmn_cd WHERE clsf_cd = 'fszz02' and att_1 = 'y')
+        </empty>
         <notEmpty property="s_insp_kind_cd">
             AND a.insp_kind_cd = #s_insp_kind_cd#
         </notEmpty>
@@ -262,6 +265,9 @@
         <notEmpty property="s_insp_dvsn_cd">
             AND a.insp_dvsn_cd = #s_insp_dvsn_cd#
         </notEmpty>
+        <empty property="s_insp_dvsn_cd">
+        	AND a.insp_dvsn_cd IN (SELECT cmn_cd FROM rmzz_cmn_cd WHERE clsf_cd = 'fszz02' and att_1 = 'y')
+        </empty>
         <notEmpty property="s_insp_kind_cd">
             AND a.insp_kind_cd = #s_insp_kind_cd#
         </notEmpty>

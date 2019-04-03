@@ -33,6 +33,7 @@ public class SqlBuilder {
 	public static final String PARAM_GUBUN_CHAR = "#";
 	
 	public static final String TAG_TEXT = "#text";
+	public static final String TAG_EMPTY = "empty";
 	public static final String TAG_NOT_EMPTY = "notEmpty";
 	public static final String TAG_EQUAL = "equal";
 	public static final String TAG_NOT_EQUAL = "notequal";
@@ -211,6 +212,12 @@ public class SqlBuilder {
 				tmpNodeMap = tmpNode.getAttributes();
 				tmpNodeKey = tmpNodeMap.getNamedItem(ATTR_PROPERTY).getNodeValue();
 				if (!Util.isNullOrEmpty(params.get(tmpNodeKey))) {
+					sb.append(tmpNode.getFirstChild().getNodeValue());
+				}
+			} else if (TAG_EMPTY.equals(sqlChildNodes.item(i).getNodeName())) {
+				tmpNodeMap = tmpNode.getAttributes();
+				tmpNodeKey = tmpNodeMap.getNamedItem(ATTR_PROPERTY).getNodeValue();
+				if (Util.isNullOrEmpty(params.get(tmpNodeKey))) {
 					sb.append(tmpNode.getFirstChild().getNodeValue());
 				}
 			} else if (TAG_EQUAL.equalsIgnoreCase(tmpNode.getNodeName())) {

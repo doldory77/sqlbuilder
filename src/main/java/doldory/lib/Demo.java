@@ -14,7 +14,7 @@ public class Demo {
 		params2.put("s_faci_task_dvsn_cd", "FF");
 		params2.put("s_plan_start_dt", "20181213");
 		params2.put("s_plan_end_dt", "20181213");
-		params2.put("s_insp_dvsn_cd", "04");
+		params2.put("s_insp_dvsn_cd", "");
 		params2.put("s_insp_stn_cd", "0101");
 		params2.put("s_enfc_cmp_cd", "");
 		params2.put("s_insp_kind_cd", "0402");
